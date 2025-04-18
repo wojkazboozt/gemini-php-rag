@@ -1,0 +1,171 @@
+Import
+
+There are four types of importer:
+
+Avarda
+
+Adyen
+
+Kronor
+
+Paypal
+
+File import is an automated process however, there is an option for manual import by uploading a file and initiating the import process.
+
+In the case of Avarda import, additional fields must be filled out, such as currency and bank accounts. However, these fields are often pre-filled with previously used values.
+
+It’s important to select the same Currency as used in file for import
+
+Errors while processing:
+
+Financial period locked. General ledger line changed. Financial period locked.
+
+cashSale/cashRefund transaction is used. 
+
+Currency mismatch -> cash settlement form: SEK -> cash sale/refund: NOK -> imported file: NOK
+
+Currency reevaluation
+
+Currency reevaluation calculation is made only for Adyen type
+
+Update command
+
+Update command is executed each day in the morning,
+
+https://rundeck5.booztx.com/project/finance/execution/show/42165134
+
+Tries to find matching transactions for the lines where they are missing since the beginning of the currently open month.
+
+2025-04-11 05:00:06: Start update missing cash settlement lines command
+2025-04-11 05:00:06: Update missing cash settlement cash sale lines for Avarda from 2025-04-01
+2025-04-11 05:00:54: There was no missing cash sales for Avarda
+2025-04-11 05:00:54: Update missing cash settlement cash refund lines for Avarda from 2025-04-01
+2025-04-11 05:01:54: Found 16 missing lines in 16 cash settlements
+
+Cash settlement file voiding
+
+It’s possible to void imported file and corresponding cash settlement transactions. 
+
+Void button can be found on Cash settlement file list:
+
+As a result Cash settlement transaction will get status “void”, GL impact will be deleted as well as relations to transactions.
+
+Accounts configuration
+
+Latest changes/updates:
+
+the booking of deposit and it should be booked on: 1665 Adyen Deposit (Deposit and Deposit correction)
+Reserve and balance transfer doesnt need to be splitted on separate account, both can be booked on: 1667 Current receivables Adyen -Reserve
+
+Automatic generation and import
+
+Starting from Dec 2022 files are imported automatically, based on incoming webhook from Adyen
+
+Incoming webhook from Adyen, REPORT_AVAILABLE at https://ca-live.adyen.com/reports/download/MerchantAccount/Booztlet/settlement_detail_report_batch_431.csv
+
+
+
+Maintenance
+
+Most of the time there is no need for specific process supervision
+
+In fact, the only place to follow is the #prj-finance-bot channel
+
+and need to make sure that no job is stuck in the finance.import and finance.settled_status queues
+
+Any doubts and problems should be reported and resolved on #prj-cash-settlements channel
+
+Adyen imports:
+
+Between 3:00-5:00 AM every day we should expect webhooks for external_settlement:
+
+financebot
+APP  5:42 AM
+[live] Incoming webhook from Adyen, REPORT_AVAILABLE at https://ca-live.adyen.com/reports/download/MerchantAccount/Booztlet/external_settlement_detail_report_2024_07_31.csv
+
+financebot
+APP  5:49 AM
+[live] Incoming webhook from Adyen, REPORT_AVAILABLE at https://ca-live.adyen.com/reports/download/MerchantAccount/BooztEcomSE/external_settlement_detail_report_2024_07_31.csv
+
+Every tuesdays and fridays webhooks for settlement_detail:
+
+financebot
+APP  3:26 AM
+[live] Incoming webhook from Adyen, REPORT_AVAILABLE at https://ca-live.adyen.com/reports/download/MerchantAccount/Booztlet/settlement_detail_report_batch_586.csv
+
+financebot
+APP  3:33 AM
+[live] Incoming webhook from Adyen, REPORT_AVAILABLE at https://ca-live.adyen.com/reports/download/MerchantAccount/BooztEcomSE/settlement_detail_report_batch_536.csv
+
+Kronor imports:
+
+Between 3:00-5:00 AM every day we should expect webhooks for 2 files:
+
+financebot
+APP  5:10 AM
+[live] Incoming webhook from Kronor: settlementReportReady settlements_from_2024-07-29_to_2024-07-29.csv
+
+financebot
+APP  5:32 AM
+[live] Incoming webhook from Kronor: directPaymentReconciliationReportReady direct_payment_reconciliation_from_2024-07-29_to_2024-07-29.csv
+
+If any of them is missing, we can ask for it on #prj-cash-settlements channel
+
+Paypal imports:
+
+Around 11:00 AM every working day, 5 paypal files are downloaded from sFTP:
+
+11:00
+[live] NOK-STL-20240729.01.007.CSV file downloaded from Paypal and added to queue
+11:00
+[live] DKK-STL-20240729.01.009.CSV file downloaded from Paypal and added to queue
+11:01
+[live] SEK-STL-20240729.01.007.CSV file downloaded from Paypal and added to queue
+11:01
+[live] EUR-STL-20240729.01.007.CSV file downloaded from Paypal and added to queue
+11:01
+[live] PLN-STL-20240729.01.007.CSV file downloaded from Paypal and added to queue
+
+Avarda imports:
+
+Around 11:00 AM every working day, 3 avarda (for Booztlet only) files are downloaded from sFTP:
+
+11:00
+[live] AVR20240730-627-3.csv file downloaded from Avarda and added to queue
+11:00
+[live] Empty AVR20240730-648-3.csv file downloaded from Avarda
+11:00
+[live] Empty AVR20240730-650-3.csv file downloaded from Avarda
+11:00
+[live] AVR20240730-626-3.csv file downloaded from Avarda and added to queue
+11:00
+[live] AVR20240730-624-3.csv file downloaded from Avarda and added to queue
+11:01
+[live] Empty AVR20240730-651-3.csv file downloaded from Avarda
+
+in case of decision to import all files, just revert this MR: https://gitlab.com/boozt/core/finance/-/merge_requests/6738 
+
+Connecting to FTP
+
+Paypal
+
+sftp sftpf5_paypalnoboozt.com@reports.paypal.com
+Password authentication
+Password: 
+Connected to reports.paypal.com.
+sftp> 
+sftp> 
+sftp> ls
+ppreports  
+sftp> cd ppreports/
+sftp> ls
+outgoing  
+sftp> cd outgoing/
+sftp> ls
+sftp> get STL-20250114.01.007.CSV NOK-STL-20250114.01.007.CSV
+Fetching /ppreports/outgoing/STL-20250114.01.007.CSV to NOK-STL-20250114.01.007.CSV
+/ppreports/outgoing/STL-20250114.01.007.CSV
+
+Avarda
+
+sftp -oPasswordAuthentication=yes -P 2020 FTP_avarda_pay_data@sftp.booztx.com
