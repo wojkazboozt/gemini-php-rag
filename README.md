@@ -1,7 +1,7 @@
 
 
 
-export GOOGLE_API_KEY="AIzaSyCTOIMGR2aeoMc9hwmrwqrjV60xDyV1OzI"
+export GOOGLE_API_KEY="your_api_key"
 
 php -S localhost:8000
 
