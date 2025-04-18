@@ -1,0 +1,28 @@
+
+
+1. Link to CashSettlementLine
+
+Option available only for “Correction” button on Cash Settlement line report.
+
+
+
+2. Link to SalesOrder/CashSale/CashRefund
+
+Option available only for “Correction” button on Cash Settlement line report.
+
+This correction option updates paymentTransactionId in selected “Connected transactions”
+
+3. Close with a reason
+
+Reason settings are available under Transactions > Bank > Cash Settlement Correction Reason menu
+
+Option default for “Correction” button on SalesOrder/CashSale/CashRefund list/view
+
+https://finance-stage.booztx.com/settings/cash-settlement-correction-reason/list
+
+the next step is to select a “problematic” transaction and click the corresponding "Correction" button
+
+
+
+After completing all required fields, and linking other transactions (by searching for them by prefixedOrderId) selecting Cash Settlement Correction Reason - a new Cash Settlement Correction transaction will be created, and the status of all connected transactions changed to "Manually closed".
+
