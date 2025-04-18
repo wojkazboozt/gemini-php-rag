@@ -149,7 +149,7 @@ Connecting to FTP
 
 Paypal
 
-sftp sftpf5_paypalnoboozt.com@reports.paypal.com
+sftp paypaluser.com@reports.paypal.com
 Password authentication
 Password: 
 Connected to reports.paypal.com.
@@ -168,4 +168,4 @@ Fetching /ppreports/outgoing/STL-20250114.01.007.CSV to NOK-STL-20250114.01.007.
 
 Avarda
 
-sftp -oPasswordAuthentication=yes -P 2020 FTP_avarda_pay_data@sftp.booztx.com
+sftp -oPasswordAuthentication=yes -P 2020 avarda_user@sftp.booztx.com
